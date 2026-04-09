@@ -1,5 +1,5 @@
 [build]
-  command = "npx quartz build"
+  command = "npm run build"
   publish = "public"
 
 [build.environment]
