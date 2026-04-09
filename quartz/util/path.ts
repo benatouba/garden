@@ -222,8 +222,24 @@ export function getAllSegmentPrefixes(tags: string): string[] {
 }
 
 export interface TransformOptions {
-  strategy: "absolute" | "relative" | "shortest"
+  strategy: "absolute" | "relative" | "shortest" | "nearest"
   allSlugs: FullSlug[]
+}
+
+function commonPrefixLength(a: string[], b: string[]): number {
+  let i = 0
+  while (i < a.length && i < b.length && a[i] === b[i]) {
+    i += 1
+  }
+
+  return i
+}
+
+function distanceBetweenSlugs(from: FullSlug, to: FullSlug): number {
+  const fromFolders = from.split("/").slice(0, -1)
+  const toFolders = to.split("/").slice(0, -1)
+  const shared = commonPrefixLength(fromFolders, toFolders)
+  return fromFolders.length + toFolders.length - 2 * shared
 }
 
 export function transformLink(src: FullSlug, target: string, opts: TransformOptions): RelativeURL {
@@ -236,7 +252,14 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
     const canonicalSlug = stripSlashes(targetSlug.slice(".".length))
     let [targetCanonical, targetAnchor] = splitAnchor(canonicalSlug)
 
-    if (opts.strategy === "shortest") {
+    if (opts.strategy === "shortest" || opts.strategy === "nearest") {
+      if (opts.strategy === "nearest" && targetCanonical.includes("/")) {
+        const exactMatch = opts.allSlugs.find((slug) => slug === targetCanonical)
+        if (exactMatch) {
+          return (resolveRelative(src, exactMatch) + targetAnchor) as RelativeURL
+        }
+      }
+
       // if the file name is unique, then it's just the filename
       const matchingFileNames = opts.allSlugs.filter((slug) => {
         const parts = slug.split("/")
@@ -244,10 +267,21 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
         return targetCanonical === fileName
       })
 
-      // only match, just use it
-      if (matchingFileNames.length === 1) {
-        const targetSlug = matchingFileNames[0]
-        return (resolveRelative(src, targetSlug) + targetAnchor) as RelativeURL
+      if (matchingFileNames.length > 0) {
+        if (opts.strategy === "shortest" && matchingFileNames.length === 1) {
+          const targetSlug = matchingFileNames[0]
+          return (resolveRelative(src, targetSlug) + targetAnchor) as RelativeURL
+        }
+
+        if (opts.strategy === "nearest") {
+          const nearest = matchingFileNames
+            .map((slug) => ({
+              slug,
+              distance: distanceBetweenSlugs(src, slug),
+            }))
+            .sort((a, b) => a.distance - b.distance || a.slug.localeCompare(b.slug))[0]
+          return (resolveRelative(src, nearest.slug) + targetAnchor) as RelativeURL
+        }
       }
     }
 

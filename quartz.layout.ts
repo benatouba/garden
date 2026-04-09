@@ -1,19 +1,19 @@
 import { PageLayout, SharedLayout } from "./quartz/cfg"
 import * as Component from "./quartz/components"
 
-const simplifyExplorerName = (value: string) => {
-  const withoutPrefix = value.replace(/^\d{2}_/, "")
+const explorerMapFn = (node: { displayName: string }) => {
+  const withoutPrefix = node.displayName.replace(/^\d{2}_/, "")
   if (/^[0-9a-z_-]+$/.test(withoutPrefix)) {
-    return withoutPrefix.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim()
+    const normalized = withoutPrefix.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim()
+    if (normalized) {
+      node.displayName = normalized
+    }
+    return
   }
 
-  return withoutPrefix.trim()
-}
-
-const explorerMapFn = (node: { displayName: string }) => {
-  const nextName = simplifyExplorerName(node.displayName)
-  if (nextName) {
-    node.displayName = nextName
+  const trimmed = withoutPrefix.trim()
+  if (trimmed) {
+    node.displayName = trimmed
   }
 }
 
@@ -59,6 +59,7 @@ export const defaultContentPageLayout: PageLayout = {
     }),
     Component.Explorer({
       mapFn: explorerMapFn,
+      filterFn: () => true,
       folderDefaultState: "open",
       folderClickBehavior: "collapse",
     }),
@@ -93,6 +94,7 @@ export const defaultListPageLayout: PageLayout = {
     }),
     Component.Explorer({
       mapFn: explorerMapFn,
+      filterFn: () => true,
       folderDefaultState: "open",
       folderClickBehavior: "collapse",
     }),
