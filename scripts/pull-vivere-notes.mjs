@@ -11,6 +11,7 @@ const CLONE_DIR = path.join(ROOT_DIR, ".quartz-cache", "vivere-source")
 
 const DEFAULT_GIT_URL = "https://github.com/benatouba/vivere.git"
 const DEFAULT_GIT_REF = "main"
+const DEFAULT_ENTRY_NOTE = "index.md"
 
 const IGNORE_ROOT_ENTRIES = new Set([".git", ".github", ".obsidian", ".trash", "node_modules"])
 const IGNORE_PREFIXES = [".", "_"]
@@ -61,8 +62,35 @@ const pathExists = async (targetPath) => {
   }
 }
 
+const fileExists = async (targetPath) => {
+  try {
+    const stats = await fs.stat(targetPath)
+    return stats.isFile()
+  } catch {
+    return false
+  }
+}
+
 const ensureDirectory = async (dirPath) => {
   await fs.mkdir(dirPath, { recursive: true })
+}
+
+const normalizeEntryNoteSetting = (rawValue) => {
+  const normalized = rawValue.replace(/\\/g, "/").trim().replace(/^\.\//, "")
+  if (normalized.length === 0) {
+    throw new Error("OBSIDIAN_SOURCE_ENTRY_NOTE must not be empty")
+  }
+
+  if (normalized.startsWith("/")) {
+    throw new Error("OBSIDIAN_SOURCE_ENTRY_NOTE must be a relative path")
+  }
+
+  const segments = normalized.split("/")
+  if (segments.some((segment) => segment.length === 0 || segment === "." || segment === "..")) {
+    throw new Error("OBSIDIAN_SOURCE_ENTRY_NOTE must be a safe relative path")
+  }
+
+  return segments.join("/")
 }
 
 const safeErrorText = (text, token) => {
@@ -257,6 +285,35 @@ const copyTree = async (srcDir, destDir, relative = "") => {
   return copiedFiles
 }
 
+const resolveEntryNoteSource = async ({ sourceRoot, sourceSubdir, entryNoteSetting }) => {
+  const candidates =
+    entryNoteSetting.toLowerCase() === "index.md"
+      ? [entryNoteSetting, "_index.md"]
+      : [entryNoteSetting]
+
+  for (const candidate of candidates) {
+    const candidatePath = path.resolve(sourceRoot, candidate)
+    const isWithinSourceRoot =
+      candidatePath === sourceRoot || candidatePath.startsWith(`${sourceRoot}${path.sep}`)
+    if (!isWithinSourceRoot) {
+      throw new Error(`Invalid entry note path outside source root: ${candidate}`)
+    }
+
+    if (await fileExists(candidatePath)) {
+      return {
+        relativePath: candidate,
+        absolutePath: candidatePath,
+      }
+    }
+  }
+
+  throw new Error(
+    `Missing entry note: none of [${candidates.join(", ")}] was found at ${
+      sourceSubdir === "." ? "repository root" : sourceSubdir
+    }`,
+  )
+}
+
 try {
   await loadDotEnvFile(ENV_FILE)
 
@@ -266,7 +323,9 @@ try {
   const gitToken = gitTokenRaw.trim().length > 0 ? gitTokenRaw.trim() : null
   const sourceSubdirRaw = (process.env.OBSIDIAN_SOURCE_SUBDIR ?? ".").trim()
   const sourceSubdir = sourceSubdirRaw === "" ? "." : sourceSubdirRaw
-  const entryNoteFileName = (process.env.OBSIDIAN_SOURCE_ENTRY_NOTE ?? "index.md").trim()
+  const entryNoteSetting = normalizeEntryNoteSetting(
+    process.env.OBSIDIAN_SOURCE_ENTRY_NOTE ?? DEFAULT_ENTRY_NOTE,
+  )
 
   await cloneRepository({
     gitUrl,
@@ -281,15 +340,20 @@ try {
     throw new Error(`Source subdirectory does not exist in repository: ${sourceSubdir}`)
   }
 
+  const entryNoteSource = await resolveEntryNoteSource({
+    sourceRoot,
+    sourceSubdir,
+    entryNoteSetting,
+  })
+
   await fs.rm(CONTENT_DIR, { recursive: true, force: true })
   await ensureDirectory(CONTENT_DIR)
 
   const copiedFiles = await copyTree(sourceRoot, CONTENT_DIR)
-  const entryNote = path.join(CONTENT_DIR, entryNoteFileName)
-  if (!(await pathExists(entryNote))) {
-    throw new Error(
-      `Missing entry note: ${entryNoteFileName} was not found at ${sourceSubdir === "." ? "repository root" : sourceSubdir}`,
-    )
+  const entryNote = path.join(CONTENT_DIR, "index.md")
+  await fs.copyFile(entryNoteSource.absolutePath, entryNote)
+  if (!(await fileExists(entryNote))) {
+    throw new Error("Failed to place entry note at content/index.md")
   }
 
   console.log("Vivere notes synced.")
@@ -298,7 +362,8 @@ try {
   console.log(`- source path: ${sourceSubdir}`)
   console.log(`- copied files: ${copiedFiles}`)
   console.log(`- content dir: ${CONTENT_DIR}`)
-  console.log(`- entry note: content/${entryNoteFileName}`)
+  console.log(`- entry note source: ${entryNoteSource.relativePath}`)
+  console.log("- entry note: content/index.md")
 } catch (error) {
   console.error("Failed to sync notes from vivere repository.")
   console.error(error instanceof Error ? error.message : String(error))
