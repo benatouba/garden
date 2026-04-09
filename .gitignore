@@ -21,6 +21,7 @@ devenv.local.yaml
 
 # pre-commit
 .pre-commit-config.yaml
-# all contents of content exept index.md
+
+# Pulled notes are build-time content, not committed here
 content/*
 !content/index.md
