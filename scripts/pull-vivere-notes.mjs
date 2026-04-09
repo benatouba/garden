@@ -317,6 +317,7 @@ const resolveEntryNoteSource = async ({ sourceRoot, sourceSubdir, entryNoteSetti
 try {
   await loadDotEnvFile(ENV_FILE)
 
+	const localNotes = path.join("..", "vivere")
   const gitUrl = (process.env.OBSIDIAN_SOURCE_GIT_URL ?? DEFAULT_GIT_URL).trim()
   const gitRef = (process.env.OBSIDIAN_SOURCE_GIT_REF ?? DEFAULT_GIT_REF).trim()
   const gitTokenRaw = process.env.OBSIDIAN_SOURCE_GIT_TOKEN ?? process.env.GITHUB_TOKEN ?? ""
@@ -327,13 +328,19 @@ try {
     process.env.OBSIDIAN_SOURCE_ENTRY_NOTE ?? DEFAULT_ENTRY_NOTE,
   )
 
-  await cloneRepository({
-    gitUrl,
-    gitRef,
-    targetDir: CLONE_DIR,
-    token: gitToken,
-    cwd: ROOT_DIR,
-  })
+	if (await pathExists(localNotes)) {
+		console.log(`Using local notes from ${localNotes}`)
+		await fs.rm(CLONE_DIR, { recursive: true, force: true })
+		await fs.cp(localNotes, CLONE_DIR, { recursive: true })
+	} else {
+		await cloneRepository({
+			gitUrl,
+			gitRef,
+			targetDir: CLONE_DIR,
+			token: gitToken,
+			cwd: ROOT_DIR,
+		})
+	}
 
   const sourceRoot = path.resolve(CLONE_DIR, sourceSubdir)
   if (!(await pathExists(sourceRoot))) {
