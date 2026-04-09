@@ -28,6 +28,7 @@ Required `.env` variables:
 - `OBSIDIAN_SOURCE_GIT_REF` (default: `main`)
 - `OBSIDIAN_SOURCE_GIT_TOKEN` (required for private repo access)
 - `OBSIDIAN_SOURCE_SUBDIR` (optional, default `.`)
+- `OBSIDIAN_SOURCE_ENTRY_NOTE` (optional, default `index.md`; falls back to `_index.md` and is copied to `content/index.md`)
 
 Token requirements:
 
@@ -60,6 +61,8 @@ Build production output:
 npm run build
 ```
 
+`npm run build` includes a security check that fails the build if alias redirects in `public/` point to notes marked `publish: private` or `publish: false`.
+
 Sync only:
 
 ```bash
@@ -80,6 +83,20 @@ In Netlify site settings, add environment variables:
 - `OBSIDIAN_SOURCE_GIT_REF=main`
 - `OBSIDIAN_SOURCE_GIT_TOKEN=<your token>`
 - Optional: `OBSIDIAN_SOURCE_SUBDIR=.`
+- Optional: `OBSIDIAN_SOURCE_ENTRY_NOTE=index.md`
+
+## GitHub Action Security Guard
+
+This repository includes `.github/workflows/security-private-notes.yml`.
+
+- It runs on every push and pull request.
+- It executes `npm run build`, which includes the private-note publication guard.
+- Add these repository secrets for CI builds:
+  - `OBSIDIAN_SOURCE_GIT_URL`
+  - `OBSIDIAN_SOURCE_GIT_REF`
+  - `OBSIDIAN_SOURCE_GIT_TOKEN`
+  - `OBSIDIAN_SOURCE_SUBDIR` (optional)
+  - `OBSIDIAN_SOURCE_ENTRY_NOTE` (optional)
 
 Important: Quartz file discovery is configured to ignore `.gitignore` rules for build input, so pulled notes in `content/` are still indexed and published.
 
