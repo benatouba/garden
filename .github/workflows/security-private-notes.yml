@@ -1,0 +1,30 @@
+name: Security - Private Notes
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  private-note-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and run security checks
+        run: npm run build
+        env:
+          OBSIDIAN_SOURCE_GIT_URL: ${{ secrets.OBSIDIAN_SOURCE_GIT_URL }}
+          OBSIDIAN_SOURCE_GIT_REF: ${{ secrets.OBSIDIAN_SOURCE_GIT_REF }}
+          OBSIDIAN_SOURCE_GIT_TOKEN: ${{ secrets.OBSIDIAN_SOURCE_GIT_TOKEN }}
+          OBSIDIAN_SOURCE_SUBDIR: ${{ secrets.OBSIDIAN_SOURCE_SUBDIR }}
+          OBSIDIAN_SOURCE_ENTRY_NOTE: ${{ secrets.OBSIDIAN_SOURCE_ENTRY_NOTE }}
