@@ -10,12 +10,13 @@
     lsp.enable = true;
   };
 
+  dotenv.enable = true;
+
   packages = with pkgs; [
     git
     jq
     shellcheck
     nodePackages_latest.bash-language-server
-    nodePackages.typescript-language-server
     vtsls
     nodePackages.vscode-langservers-extracted
     marksman
