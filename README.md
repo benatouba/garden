@@ -34,6 +34,18 @@ Token requirements:
 
 ## Local Development
 
+If you use devenv:
+
+```bash
+devenv shell
+```
+
+Useful devenv tasks:
+
+- `devenv tasks run garden:sync-notes`
+- `devenv tasks run garden:build`
+- `devenv tasks run garden:dev`
+
 Sync notes and start Quartz dev server:
 
 ```bash
