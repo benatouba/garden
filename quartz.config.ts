@@ -1,7 +1,5 @@
 import { QuartzConfig } from "./quartz/cfg"
 import * as Plugin from "./quartz/plugins"
-import { PublishClassificationFilter } from "./custom/publishClassificationFilter"
-import { HeadingTitleFromContent } from "./custom/headingTitleFromContent"
 
 /**
  * Quartz 4 Configuration
@@ -85,7 +83,7 @@ const config: QuartzConfig = {
     transformers: [
       Plugin.FrontMatter(),
       Plugin.CreatedModifiedDate({
-        priority: ["frontmatter", "git", "filesystem"],
+        priority: ["frontmatter", "filesystem"],
       }),
       Plugin.SyntaxHighlighting({
         theme: {
@@ -100,9 +98,8 @@ const config: QuartzConfig = {
       Plugin.CrawlLinks({ markdownLinkResolution: "shortest" }),
       Plugin.Description(),
       Plugin.Latex({ renderEngine: "katex" }),
-      HeadingTitleFromContent(),
     ],
-    filters: [PublishClassificationFilter(), Plugin.RemoveDrafts()],
+    filters: [Plugin.RemoveDrafts()],
     emitters: [
       Plugin.AliasRedirects(),
       Plugin.ComponentResources(),

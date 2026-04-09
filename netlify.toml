@@ -1,6 +1,5 @@
 [build]
-  base = "."
-  command = "bash ./scripts/netlify-build.sh"
+  command = "npm run build"
   publish = "public"
 
 [build.environment]

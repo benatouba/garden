@@ -1,5 +1,5 @@
 {
-  "extends": "./_quartz-upstream/tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "noUnusedLocals": false,
     "rootDir": "."
@@ -8,9 +8,9 @@
     "quartz.config.ts",
     "quartz.layout.ts",
     "custom/**/*.ts",
-    "_quartz-upstream/globals.d.ts",
-    "_quartz-upstream/index.d.ts",
-    "_quartz-upstream/package.json"
+    "globals.d.ts",
+    "index.d.ts",
+    "package.json"
   ],
-  "exclude": ["_quartz-upstream/build/**/*.d.ts"]
+  "exclude": ["build/**/*.d.ts"]
 }

@@ -12,16 +12,15 @@
     "url": "https://github.com/jackyzha0/quartz.git"
   },
   "scripts": {
-    "quartz": "node ./scripts/quartz-runner.mjs",
-    "quartz:local": "./_quartz-upstream/quartz/bootstrap-cli.mjs",
-    "docs": "npx quartz build --serve -d _quartz-upstream/docs",
-    "build:vivere": "npm run quartz -- build",
-    "dev:vivere": "npm run quartz -- build --serve",
-    "sync:notes": "node ./scripts/sync-obsidian-notes.mjs",
+    "quartz": "./quartz/bootstrap-cli.mjs",
+    "docs": "npx quartz build --serve -d docs",
+    "sync:notes": "node ./scripts/pull-vivere-notes.mjs",
+    "build": "npm run sync:notes && npx quartz build",
+    "dev": "npm run sync:notes && npx quartz build --serve",
     "check": "tsc --noEmit && npx prettier . --check",
     "format": "npx prettier . --write",
     "test": "tsx --test",
-    "profile": "0x -D prof ./_quartz-upstream/quartz/bootstrap-cli.mjs build --concurrency=1 -d ../.quartz-source-vivere/content"
+    "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1"
   },
   "engines": {
     "npm": ">=10.9.2",
@@ -36,7 +35,7 @@
     "quartz"
   ],
   "bin": {
-    "quartz": "./_quartz-upstream/quartz/bootstrap-cli.mjs"
+    "quartz": "./quartz/bootstrap-cli.mjs"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
