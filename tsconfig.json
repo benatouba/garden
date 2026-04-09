@@ -1,22 +1,16 @@
 {
+  "extends": "./_quartz-upstream/tsconfig.json",
   "compilerOptions": {
-    "lib": ["esnext", "DOM", "DOM.Iterable"],
-    "experimentalDecorators": true,
-    "module": "esnext",
-    "target": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
-    "incremental": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact"
+    "noUnusedLocals": false,
+    "rootDir": "."
   },
-  "include": ["**/*.ts", "**/*.tsx", "./package.json"],
-  "exclude": ["build/**/*.d.ts"]
+  "include": [
+    "quartz.config.ts",
+    "quartz.layout.ts",
+    "custom/**/*.ts",
+    "_quartz-upstream/globals.d.ts",
+    "_quartz-upstream/index.d.ts",
+    "_quartz-upstream/package.json"
+  ],
+  "exclude": ["_quartz-upstream/build/**/*.d.ts"]
 }
