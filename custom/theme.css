@@ -11,7 +11,7 @@
   --surface-elevated: #45475a;
   --border-color: rgba(166, 173, 200, 0.18);
   --primary: #fab387;
-  --primary-muted: rgba(250, 179, 135, 0.2);
+  --primary-muted: rgba(250, 179, 135, 0.12);
 }
 
 body {
