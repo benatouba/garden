@@ -4,14 +4,14 @@
   color-scheme: dark;
   --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --font-display: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
-  --page-text: #e2e8f0;
-  --page-text-muted: #94a3b8;
-  --page-background: #0f172a;
-  --surface: #1e293b;
-  --surface-elevated: #334155;
-  --border-color: rgba(148, 163, 184, 0.12);
-  --primary: #22d3ee;
-  --primary-muted: rgba(34, 211, 238, 0.15);
+  --page-text: #cdd6f4;
+  --page-text-muted: #a6adc8;
+  --page-background: #1e1e2e;
+  --surface: #313244;
+  --surface-elevated: #45475a;
+  --border-color: rgba(166, 173, 200, 0.18);
+  --primary: #fab387;
+  --primary-muted: rgba(250, 179, 135, 0.2);
 }
 
 body {
@@ -35,20 +35,11 @@ body::after {
 }
 
 body::before {
-  background:
-    radial-gradient(circle at 8% 12%, rgba(34, 211, 238, 0.26), transparent 44%),
-    radial-gradient(circle at 92% 86%, rgba(14, 116, 144, 0.34), transparent 42%),
-    linear-gradient(180deg, #0b1324 0%, #0f172a 58%, #111827 100%);
+  background: #1e1e2e;
 }
 
 body::after {
-  z-index: -1;
-  opacity: 0.1;
-  background-image:
-    linear-gradient(to right, rgba(148, 163, 184, 0.22) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.22) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 80% 62% at 50% 12%, black, transparent 85%);
+  display: none;
 }
 
 .page {
@@ -62,8 +53,8 @@ body::after {
 .page > #quartz-body > .sidebar {
   padding-top: 2.5rem;
   padding-inline: 1.5rem;
-  background: rgba(15, 23, 42, 0.5);
-  border-inline: 1px solid rgba(148, 163, 184, 0.13);
+  background: rgba(30, 30, 46, 0.58);
+  border-inline: 1px solid rgba(166, 173, 200, 0.2);
   backdrop-filter: blur(14px) saturate(140%);
 }
 
@@ -72,10 +63,10 @@ body::after {
 }
 
 .page > #quartz-body > .center > article {
-  border: 1px solid rgba(148, 163, 184, 0.16);
+  border: 1px solid rgba(166, 173, 200, 0.22);
   border-radius: 14px;
   padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 2.3vw, 1.75rem);
-  background: rgba(15, 23, 42, 0.62);
+  background: rgba(30, 30, 46, 0.68);
   box-shadow: 0 18px 40px rgba(2, 6, 23, 0.32);
 }
 
@@ -156,13 +147,13 @@ thead {
 }
 
 a.internal.tag-link {
-  border: 1px solid rgba(34, 211, 238, 0.25);
+  border: 1px solid rgba(250, 179, 135, 0.42);
 }
 
 .search > .search-button {
   height: 2.2rem;
   border-radius: 0.6rem;
-  border-color: rgba(148, 163, 184, 0.23);
+  border-color: rgba(166, 173, 200, 0.28);
   background: rgba(2, 6, 23, 0.2);
 }
 
@@ -172,26 +163,26 @@ a.internal.tag-link {
 }
 
 .search > .search-button:hover {
-  border-color: rgba(34, 211, 238, 0.42);
+  border-color: rgba(250, 179, 135, 0.58);
 }
 
 .search > .search-container > .search-space > * {
-  background: #0f172a;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: #1e1e2e;
+  border: 1px solid rgba(166, 173, 200, 0.24);
 }
 
 .search > .search-container > .search-space > .search-layout {
-  border-color: rgba(148, 163, 184, 0.2);
+  border-color: rgba(166, 173, 200, 0.24);
 }
 
 .search > .search-container > .search-space > .search-layout .result-card:hover,
 .search > .search-container > .search-space > .search-layout .result-card:focus,
 .search > .search-container > .search-space > .search-layout .result-card.focus {
-  background: rgba(30, 41, 59, 0.7);
+  background: rgba(69, 71, 90, 0.72);
 }
 
 .search .result-card > ul > li > p {
-  border: 1px solid rgba(34, 211, 238, 0.25);
+  border: 1px solid rgba(250, 179, 135, 0.42);
 }
 
 .darkmode {
@@ -301,10 +292,10 @@ a.internal.tag-link {
 .graph > .graph-outer,
 .toc .toc-content,
 .backlinks > ul.overflow {
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  border: 1px solid rgba(166, 173, 200, 0.22);
   border-radius: 10px;
   padding: 0.45rem;
-  background: rgba(15, 23, 42, 0.52);
+  background: rgba(30, 30, 46, 0.56);
 }
 
 .graph > .graph-outer {
@@ -329,7 +320,7 @@ footer {
   margin-top: 1.6rem;
   margin-bottom: 2.5rem;
   opacity: 1;
-  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  border-top: 1px solid rgba(166, 173, 200, 0.24);
   padding-top: 1.2rem;
 }
 
@@ -350,7 +341,7 @@ footer > ul > li > a {
   justify-content: center;
   padding: 0.22rem 0.55rem;
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid rgba(166, 173, 200, 0.24);
   font-size: 0.74rem;
   color: var(--darkgray);
   text-transform: uppercase;
@@ -358,7 +349,7 @@ footer > ul > li > a {
 }
 
 footer > ul > li > a:hover {
-  border-color: rgba(34, 211, 238, 0.45);
+  border-color: rgba(250, 179, 135, 0.6);
   color: var(--secondary);
 }
 
