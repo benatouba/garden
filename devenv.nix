@@ -27,15 +27,18 @@
     alejandra
   ];
 
-  scripts.quartz.exec = "node ./scripts/quartz-runner.mjs";
+  scripts.quartz.exec = "./quartz/bootstrap-cli.mjs";
 
   tasks = {
-    "garden:build-vivere".exec = "npm run build:vivere";
-    "garden:dev-vivere".exec = "npm run dev:vivere";
+    "garden:sync-notes".exec = "npm run sync:notes";
+    "garden:build".exec = "npm run build";
+    "garden:dev".exec = "npm run dev";
     "garden:check".exec = "npm run check";
     "garden:format".exec = "npm run format";
-    "garden:netlify-build".exec = "bash ./scripts/netlify-build.sh";
+    "garden:netlify-build".exec = "npm run build";
   };
+
+  processes.frontend.exec = "npm run dev";
 
   enterShell = ''
     echo "Garden dev shell"
@@ -43,6 +46,6 @@
     npm --version
     pnpm --version
     echo "LSPs in PATH: vtsls, typescript-language-server, vscode-{html,css,json,eslint}-language-server, marksman, yaml-language-server, nil, nixd"
-    echo "Vivere repo available at: ../vivere"
+    echo "Use .env for OBSIDIAN_SOURCE_* settings"
   '';
 }
