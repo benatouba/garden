@@ -266,6 +266,7 @@ try {
   const gitToken = gitTokenRaw.trim().length > 0 ? gitTokenRaw.trim() : null
   const sourceSubdirRaw = (process.env.OBSIDIAN_SOURCE_SUBDIR ?? ".").trim()
   const sourceSubdir = sourceSubdirRaw === "" ? "." : sourceSubdirRaw
+  const entryNoteFileName = (process.env.OBSIDIAN_SOURCE_ENTRY_NOTE ?? "index.md").trim()
 
   await cloneRepository({
     gitUrl,
@@ -284,10 +285,10 @@ try {
   await ensureDirectory(CONTENT_DIR)
 
   const copiedFiles = await copyTree(sourceRoot, CONTENT_DIR)
-  const entryNote = path.join(CONTENT_DIR, "index.md")
+  const entryNote = path.join(CONTENT_DIR, entryNoteFileName)
   if (!(await pathExists(entryNote))) {
     throw new Error(
-      `Missing entry note: index.md was not found at ${sourceSubdir === "." ? "repository root" : sourceSubdir}`,
+      `Missing entry note: ${entryNoteFileName} was not found at ${sourceSubdir === "." ? "repository root" : sourceSubdir}`,
     )
   }
 
@@ -297,7 +298,7 @@ try {
   console.log(`- source path: ${sourceSubdir}`)
   console.log(`- copied files: ${copiedFiles}`)
   console.log(`- content dir: ${CONTENT_DIR}`)
-  console.log("- entry note: content/index.md")
+  console.log(`- entry note: content/${entryNoteFileName}`)
 } catch (error) {
   console.error("Failed to sync notes from vivere repository.")
   console.error(error instanceof Error ? error.message : String(error))
