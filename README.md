@@ -6,6 +6,8 @@ Notes are pulled from the private repository `https://github.com/benatouba/viver
 
 The entry note is `content/index.md` (from `index.md` in `benatouba/vivere`).
 
+`content/` is intentionally ignored in git (except `content/index.md`) so notes are never committed in this repository.
+
 ## Setup
 
 1. Install dependencies:
@@ -78,6 +80,8 @@ In Netlify site settings, add environment variables:
 - `OBSIDIAN_SOURCE_GIT_REF=main`
 - `OBSIDIAN_SOURCE_GIT_TOKEN=<your token>`
 - Optional: `OBSIDIAN_SOURCE_SUBDIR=.`
+
+Important: Quartz file discovery is configured to ignore `.gitignore` rules for build input, so pulled notes in `content/` are still indexed and published.
 
 ## Custom Domain (GoDaddy -> Netlify)
 
