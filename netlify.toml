@@ -1,0 +1,12 @@
+[build]
+  command = "bash ./scripts/netlify-build.sh"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_VERSION = "10"
+  OBSIDIAN_SOURCE_GIT_URL = "https://github.com/benatouba/vivere.git"
+  OBSIDIAN_SOURCE_GIT_REF = "main"
+
+[build.processing.html]
+  pretty_urls = true
