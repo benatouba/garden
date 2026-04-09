@@ -7,7 +7,6 @@ import path from "node:path"
 const ROOT_DIR = path.resolve(".")
 const ENV_FILE = path.join(ROOT_DIR, ".env")
 const CONTENT_DIR = path.join(ROOT_DIR, "content")
-const BUILD_CONTENT_DIR = path.join(ROOT_DIR, ".quartz-cache", "vivere-content")
 const CLONE_DIR = path.join(ROOT_DIR, ".quartz-cache", "vivere-source")
 
 const DEFAULT_GIT_URL = "https://github.com/benatouba/vivere.git"
@@ -284,11 +283,7 @@ try {
   await fs.rm(CONTENT_DIR, { recursive: true, force: true })
   await ensureDirectory(CONTENT_DIR)
 
-  await fs.rm(BUILD_CONTENT_DIR, { recursive: true, force: true })
-  await ensureDirectory(BUILD_CONTENT_DIR)
-
   const copiedFiles = await copyTree(sourceRoot, CONTENT_DIR)
-  await copyTree(sourceRoot, BUILD_CONTENT_DIR)
   const entryNote = path.join(CONTENT_DIR, "index.md")
   if (!(await pathExists(entryNote))) {
     throw new Error(

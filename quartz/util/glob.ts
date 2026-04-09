@@ -15,7 +15,7 @@ export async function glob(
     await globby(pattern, {
       cwd,
       ignore: ignorePatterns,
-      gitignore: false,
+      gitignore: true,
     })
   ).map(toPosixPath)
   return fps as FilePath[]
