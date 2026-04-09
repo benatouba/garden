@@ -21,3 +21,6 @@ devenv.local.yaml
 
 # pre-commit
 .pre-commit-config.yaml
+# all contents of content exept index.md
+content/*
+!content/index.md
