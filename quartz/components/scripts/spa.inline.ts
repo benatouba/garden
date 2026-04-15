@@ -24,14 +24,6 @@ const isSamePage = (url: URL): boolean => {
   return sameOrigin && samePath
 }
 
-const isSameRoute = (url: URL): boolean => {
-  return (
-    isSamePage(url) &&
-    url.search === window.location.search &&
-    url.hash === window.location.hash
-  )
-}
-
 const getOpts = ({ target }: Event): { url: URL; scroll?: boolean } | undefined => {
   if (!isElement(target)) return
   if (target.attributes.getNamedItem("target")?.value === "_blank") return
@@ -160,10 +152,6 @@ function createRouter() {
       // dont hijack behaviour, just let browser act normally
       if (!url || event.ctrlKey || event.metaKey) return
       event.preventDefault()
-
-      if (isSameRoute(url)) {
-        return
-      }
 
       if (isSamePage(url) && url.hash) {
         const el = document.getElementById(decodeURIComponent(url.hash.substring(1)))
