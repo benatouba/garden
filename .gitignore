@@ -25,3 +25,6 @@ devenv.local.yaml
 # Pulled notes are build-time content, not committed here
 content/*
 !content/index.md
+
+# development environment files
+devenv.lock
