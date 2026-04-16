@@ -2,7 +2,7 @@ import { QuartzEmitterPlugin } from "../types"
 import { QuartzComponentProps } from "../../components/types"
 import HeaderConstructor from "../../components/Header"
 import BodyConstructor from "../../components/Body"
-import { pageResources, renderPage } from "../../components/renderPage"
+import { getSiteRoot, pageResources, renderPage } from "../../components/renderPage"
 import { ProcessedContent, QuartzPluginData, defaultProcessedContent } from "../vfile"
 import { FullPageLayout } from "../../cfg"
 import path from "path"
@@ -11,7 +11,6 @@ import {
   SimpleSlug,
   stripSlashes,
   joinSegments,
-  pathToRoot,
   simplifySlug,
 } from "../../util/path"
 import { defaultListPageLayout, sharedPageComponents } from "../../../quartz.layout"
@@ -38,7 +37,7 @@ async function* processFolderInfo(
     const slug = joinSegments(folder, "index") as FullSlug
     const [tree, file] = folderContent
     const cfg = ctx.cfg.configuration
-    const externalResources = pageResources(pathToRoot(slug), resources)
+    const externalResources = pageResources(getSiteRoot(cfg), resources)
     const componentData: QuartzComponentProps = {
       ctx,
       fileData: file.data,

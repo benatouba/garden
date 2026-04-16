@@ -1,7 +1,7 @@
 import { QuartzEmitterPlugin } from "../types"
 import { QuartzComponentProps } from "../../components/types"
 import BodyConstructor from "../../components/Body"
-import { pageResources, renderPage } from "../../components/renderPage"
+import { getSiteRoot, pageResources, renderPage } from "../../components/renderPage"
 import { FullPageLayout } from "../../cfg"
 import { FullSlug } from "../../util/path"
 import { sharedPageComponents } from "../../../quartz.layout"
@@ -31,8 +31,6 @@ export const NotFoundPage: QuartzEmitterPlugin = () => {
       const cfg = ctx.cfg.configuration
       const slug = "404" as FullSlug
 
-      const url = new URL(`https://${cfg.baseUrl ?? "example.com"}`)
-      const path = url.pathname as FullSlug
       const notFound = i18n(cfg.locale).pages.error.title
       const [tree, vfile] = defaultProcessedContent({
         slug,
@@ -40,7 +38,7 @@ export const NotFoundPage: QuartzEmitterPlugin = () => {
         description: notFound,
         frontmatter: { title: notFound, tags: [] },
       })
-      const externalResources = pageResources(path, resources)
+      const externalResources = pageResources(getSiteRoot(cfg), resources)
       const componentData: QuartzComponentProps = {
         ctx,
         fileData: vfile.data,
