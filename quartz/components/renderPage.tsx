@@ -24,22 +24,22 @@ interface RenderComponents {
 
 const headerRegex = new RegExp(/h[1-6]/)
 export function pageResources(
-  siteRoot: string,
+  baseDir: FullSlug | RelativeURL,
   staticResources: StaticResources,
 ): StaticResources {
-  const contentIndexPath = joinSegments(siteRoot, "static/contentIndex.json")
+  const contentIndexPath = joinSegments(baseDir, "static/contentIndex.json")
   const contentIndexScript = `const fetchData = fetch("${contentIndexPath}").then(data => data.json())`
 
   const resources: StaticResources = {
     css: [
       {
-        content: joinSegments(siteRoot, "index.css"),
+        content: joinSegments(baseDir, "index.css"),
       },
       ...staticResources.css,
     ],
     js: [
       {
-        src: joinSegments(siteRoot, "prescript.js"),
+        src: joinSegments(baseDir, "prescript.js"),
         loadTime: "beforeDOMReady",
         contentType: "external",
       },
@@ -55,22 +55,13 @@ export function pageResources(
   }
 
   resources.js.push({
-    src: joinSegments(siteRoot, "postscript.js"),
+    src: joinSegments(baseDir, "postscript.js"),
     loadTime: "afterDOMReady",
     moduleType: "module",
     contentType: "external",
   })
 
   return resources
-}
-
-export function getSiteRoot(cfg: GlobalConfiguration): string {
-  const pathname = new URL(`https://${cfg.baseUrl ?? "example.com"}`).pathname
-  if (pathname === "") {
-    return "/"
-  }
-
-  return pathname.endsWith("/") && pathname !== "/" ? pathname.slice(0, -1) : pathname
 }
 
 function renderTranscludes(

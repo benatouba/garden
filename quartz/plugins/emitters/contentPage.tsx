@@ -3,8 +3,9 @@ import { QuartzEmitterPlugin } from "../types"
 import { QuartzComponentProps } from "../../components/types"
 import HeaderConstructor from "../../components/Header"
 import BodyConstructor from "../../components/Body"
-import { getSiteRoot, pageResources, renderPage } from "../../components/renderPage"
+import { pageResources, renderPage } from "../../components/renderPage"
 import { FullPageLayout } from "../../cfg"
+import { pathToRoot } from "../../util/path"
 import { defaultContentPageLayout, sharedPageComponents } from "../../../quartz.layout"
 import { Content } from "../../components"
 import { styleText } from "util"
@@ -24,7 +25,7 @@ async function processContent(
 ) {
   const slug = fileData.slug!
   const cfg = ctx.cfg.configuration
-  const externalResources = pageResources(getSiteRoot(cfg), resources)
+  const externalResources = pageResources(pathToRoot(slug), resources)
   const componentData: QuartzComponentProps = {
     ctx,
     fileData,
