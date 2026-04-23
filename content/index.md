@@ -31,13 +31,13 @@ Here I ramble about tech, climate science, and whatever else I find interesting.
 
 ## Core pathways
 
-1. Galapagos climate dynamics: [[galapagos-islands|Galapagos Islands]] -> [[garua|Garua]] -> [[occult-precipitation|Occult precipitation]] -> [[water-balance|Water balance]]
-2. Ocean-atmosphere coupling: [[sea-surface-temperature|Sea surface temperature]] -> [[thermocline|Thermocline]] -> [[pacific-equatorial-undercurrent|Pacific Equatorial Undercurrent]] -> [[galapagos-cold-pool|Galapagos Cold Pool]] -> [[stratocumulus|Stratocumulus]]
+1. Galapagos climate dynamics: [[galapagos-islands|Galapagos Islands]] -> [[galapagos-seasonality|Galapagos seasonality]] -> [[garua|Garua]] -> [[occult-precipitation|Occult precipitation]] -> [[water-balance|Water balance]]
+2. Ocean-atmosphere coupling: [[sea-surface-temperature|Sea surface temperature]] -> [[thermocline|Thermocline]] -> [[pacific-equatorial-undercurrent|Pacific Equatorial Undercurrent]] -> [[galapagos-cold-pool|Galapagos Cold Pool]] -> [[galapagos-sst-variability|Galapagos SST variability]] -> [[stratocumulus|Stratocumulus]]
 3. Modeling workflow: [[era5-reanalysis|ERA5 reanalysis]] -> [[dynamical-downscaling|Dynamical downscaling]] -> [[wrf|WRF]] -> [[tropical-wrf-setup|tropical WRF setup]]
 4. DARWIN publication track: [[darwin|DARWIN project]] -> [[galapagos-refined-analysis|Galapagos refined analysis]] -> [[heavy-rainfall-galapagos|Heavy rainfall in the Galapagos]]
 5. Urban climate track: [[urban-climate|urban climate]] -> [[urban-meteorology|urban meteorology]] -> [[urban-heat-island|Urban heat island]]
-6. Open science track: [[fair|FAIR]] -> [[atmodat|ATMODAT]] -> [[uc2-data-standard|UC2 data standard]] -> [[open-research-knowledge-graph|Open Research Knowledge Graph]]
-7. Methods and inference track: [[hypothesis-test|Hypothesis test]] -> [[test-statistic|test statistic]] -> [[information-criteria|information criteria]]
+6. Open science track: [[fair|FAIR]] -> [[metadata|Metadata]] -> [[provenance|Provenance]] -> [[atmodat|ATMODAT]] -> [[uc2-data-standard|UC2 data standard]] -> [[open-research-knowledge-graph|Open Research Knowledge Graph]]
+7. Methods and inference track: [[statistical-inference|Statistical inference]] -> [[hypothesis-test|Hypothesis test]] -> [[test-statistic|test statistic]] -> [[information-criteria|information criteria]]
 
 ## Quality and maintenance
 
