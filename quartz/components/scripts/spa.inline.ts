@@ -24,6 +24,136 @@ const isSamePage = (url: URL): boolean => {
   return sameOrigin && samePath
 }
 
+const LAST_VISITED_PATH_KEY = "quartz:last-visited-path"
+let notFoundRedirectTimer: number | undefined
+
+const is404Path = (pathname: string): boolean => {
+  const normalized = pathname.replace(/\/+$/, "")
+  return normalized === "/404" || normalized.endsWith("/404") || normalized.endsWith("/404.html")
+}
+
+const normalizeInternalPath = (raw: string | null): string | null => {
+  if (!raw) return null
+
+  try {
+    const parsed = new URL(raw, window.location.origin)
+    if (parsed.origin !== window.location.origin) return null
+    if (is404Path(parsed.pathname)) return null
+    return `${parsed.pathname}${parsed.search}${parsed.hash}`
+  } catch (_err) {
+    return null
+  }
+}
+
+const persistCurrentPathFor404Recovery = () => {
+  if (document.body.dataset.slug === "404") return
+
+  try {
+    sessionStorage.setItem(
+      LAST_VISITED_PATH_KEY,
+      `${window.location.pathname}${window.location.search}${window.location.hash}`,
+    )
+  } catch (_err) {}
+}
+
+function initNotFoundRecoveryUI() {
+  if (notFoundRedirectTimer !== undefined) {
+    window.clearInterval(notFoundRedirectTimer)
+    notFoundRedirectTimer = undefined
+  }
+
+  const modal = document.querySelector<HTMLElement>("[data-not-found-modal]")
+  if (!modal) return
+
+  const homeTarget = modal.dataset.homeTarget || "/"
+  const configuredSeconds = Number.parseInt(modal.dataset.autoSeconds ?? "5", 10)
+  const initialSeconds = Number.isFinite(configuredSeconds) && configuredSeconds > 0 ? configuredSeconds : 5
+
+  let fromSession: string | null = null
+  try {
+    fromSession = normalizeInternalPath(sessionStorage.getItem(LAST_VISITED_PATH_KEY))
+  } catch (_err) {}
+
+  const fromReferrer = normalizeInternalPath(document.referrer)
+  const lastNoteTarget = fromSession ?? fromReferrer
+
+  const goLastButton = modal.querySelector<HTMLButtonElement>('[data-action="go-last-note"]')
+  const goHomeButton = modal.querySelector<HTMLAnchorElement>('[data-action="go-home"]')
+  const countdownEl = modal.querySelector<HTMLElement>("[data-redirect-countdown]")
+
+  const goHome = () => {
+    window.location.assign(homeTarget)
+  }
+
+  const goLastNote = () => {
+    if (lastNoteTarget) {
+      window.location.assign(lastNoteTarget)
+      return
+    }
+
+    if (window.history.length > 1) {
+      window.history.back()
+      return
+    }
+
+    goHome()
+  }
+
+  if (goLastButton) {
+    if (!lastNoteTarget && window.history.length <= 1) {
+      goLastButton.setAttribute("disabled", "true")
+    }
+
+    const onLastClick = (evt: Event) => {
+      evt.preventDefault()
+      goLastNote()
+    }
+
+    goLastButton.addEventListener("click", onLastClick)
+    window.addCleanup(() => goLastButton.removeEventListener("click", onLastClick))
+  }
+
+  if (goHomeButton) {
+    goHomeButton.setAttribute("href", homeTarget)
+
+    const onHomeClick = (evt: Event) => {
+      evt.preventDefault()
+      goHome()
+    }
+
+    goHomeButton.addEventListener("click", onHomeClick)
+    window.addCleanup(() => goHomeButton.removeEventListener("click", onHomeClick))
+  }
+
+  let remainingSeconds = initialSeconds
+  if (countdownEl) {
+    countdownEl.textContent = String(remainingSeconds)
+  }
+
+  notFoundRedirectTimer = window.setInterval(() => {
+    remainingSeconds -= 1
+
+    if (countdownEl) {
+      countdownEl.textContent = String(Math.max(remainingSeconds, 0))
+    }
+
+    if (remainingSeconds <= 0) {
+      if (notFoundRedirectTimer !== undefined) {
+        window.clearInterval(notFoundRedirectTimer)
+        notFoundRedirectTimer = undefined
+      }
+      goLastNote()
+    }
+  }, 1000)
+
+  window.addCleanup(() => {
+    if (notFoundRedirectTimer !== undefined) {
+      window.clearInterval(notFoundRedirectTimer)
+      notFoundRedirectTimer = undefined
+    }
+  })
+}
+
 const getOpts = ({ target }: Event): { url: URL; scroll?: boolean } | undefined => {
   if (!isElement(target)) return
   if (target.attributes.getNamedItem("target")?.value === "_blank") return
@@ -126,6 +256,7 @@ async function _navigate(url: URL, isBack: boolean = false) {
     history.pushState({}, "", url)
   }
 
+  initNotFoundRecoveryUI()
   notifyNav(getFullSlug(window))
   delete announcer.dataset.persist
 }
@@ -147,11 +278,16 @@ window.spaNavigate = navigate
 
 function createRouter() {
   if (typeof window !== "undefined") {
+    persistCurrentPathFor404Recovery()
+    initNotFoundRecoveryUI()
+
     window.addEventListener("click", async (event) => {
       const { url } = getOpts(event) ?? {}
       // dont hijack behaviour, just let browser act normally
       if (!url || event.ctrlKey || event.metaKey) return
       event.preventDefault()
+
+      persistCurrentPathFor404Recovery()
 
       if (isSamePage(url) && url.hash) {
         const el = document.getElementById(decodeURIComponent(url.hash.substring(1)))
