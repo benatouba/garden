@@ -104,7 +104,7 @@ plugins:
   - source: github:quartz-community/crawl-links
     enabled: true
     options:
-      markdownLinkResolution: nearest
+      markdownLinkResolution: shortest
     order: 60
 
   - source: github:quartz-community/description
