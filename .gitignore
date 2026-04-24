@@ -1,5 +1,6 @@
 .DS_Store
 .gitignore
+.env
 node_modules
 public
 prof
@@ -9,5 +10,22 @@ tsconfig.tsbuildinfo
 private/
 .replit
 replit.nix
-.quartz/
-quartz/cli/tui/dist/
+
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
+
+# Pulled notes are build-time content, not committed here
+content/*
+!content/index.md
+
+# development environment files
+.quartz
+

@@ -1,1 +1,1 @@
-export {}
+export { BlockPrivateNotes } from "./publish"

@@ -14,12 +14,14 @@
   "scripts": {
     "quartz": "./quartz/bootstrap-cli.mjs",
     "docs": "npx quartz build --serve -d docs",
+    "sync:notes": "node ./scripts/pull-vivere-notes.mjs",
+    "check:private-publication": "node ./scripts/check-private-publication.mjs",
+    "build": "npm run sync:notes && npx quartz build && npm run check:private-publication",
+    "dev": "npm run sync:notes && npx quartz build --serve",
     "check": "tsc --noEmit && npx prettier . --check",
     "format": "npx prettier . --write",
     "test": "tsx --test",
-    "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1",
-    "install-plugins": "npx tsx ./quartz/plugins/loader/install-plugins.ts",
-    "prebuild": "npm run install-plugins"
+    "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1"
   },
   "engines": {
     "npm": ">=10.9.2",
@@ -47,6 +49,7 @@
     "esbuild-sass-plugin": "^3.6.0",
     "github-slugger": "^2.0.0",
     "globby": "^16.1.0",
+    "gray-matter": "^4.0.3",
     "hast-util-to-jsx-runtime": "^2.3.6",
     "isomorphic-git": "^1.36.3",
     "lightningcss": "^1.31.1",
@@ -59,6 +62,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "rfdc": "^1.4.1",
+    "safe-buffer": "^5.2.1",
     "serve-handler": "^6.1.6",
     "sharp": "^0.34.5",
     "source-map-support": "^0.5.21",
