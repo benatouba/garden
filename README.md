@@ -1,3 +1,4 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e9be4436-7b37-4a4e-804c-5ffc86aa36fa/deploy-status)](https://app.netlify.com/projects/vivere-garden/deploys)
 # Quartz Garden
 
 This is a standard Quartz v4 setup with a custom layout/theme and a simple note sync step.
