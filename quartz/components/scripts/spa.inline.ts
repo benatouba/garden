@@ -82,11 +82,27 @@ function initNotFoundRecoveryUI() {
   const countdownEl = modal.querySelector<HTMLElement>("[data-redirect-countdown]")
 
   const goHome = () => {
+    try {
+      const homeUrl = new URL(homeTarget, window.location.origin)
+      if (homeUrl.origin === window.location.origin) {
+        window.spaNavigate(homeUrl, false)
+        return
+      }
+    } catch (_err) {}
+
     window.location.assign(homeTarget)
   }
 
   const goLastNote = () => {
     if (lastNoteTarget) {
+      try {
+        const targetUrl = new URL(lastNoteTarget, window.location.origin)
+        if (targetUrl.origin === window.location.origin) {
+          window.spaNavigate(targetUrl, false)
+          return
+        }
+      } catch (_err) {}
+
       window.location.assign(lastNoteTarget)
       return
     }
