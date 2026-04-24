@@ -13,7 +13,7 @@ aliases:
 
 This site is built from a selection of my notes.
 
-Here I ramble about tech, climate science, and whatever else I find interesting.
+Here I write about climate science, programming, data work, and the Linux-heavy systems thinking that ties research and engineering together.
 
 ## Browse by topic
 
@@ -28,6 +28,7 @@ Here I ramble about tech, climate science, and whatever else I find interesting.
 - [[moc-statistics-and-inference|Statistics and inference]]
 - [[moc-projects-and-research-threads|Projects and research threads]]
 - [[moc-computing-devops-and-software|Computing, devops, and software]]
+- [[moc-web-development-and-application-architecture|Web development and application architecture]]
 
 ## Core pathways
 
@@ -38,6 +39,8 @@ Here I ramble about tech, climate science, and whatever else I find interesting.
 5. Urban climate track: [[urban-climate|urban climate]] -> [[urban-meteorology|urban meteorology]] -> [[urban-heat-island|Urban heat island]]
 6. Open science track: [[fair|FAIR]] -> [[metadata|Metadata]] -> [[provenance|Provenance]] -> [[atmodat|ATMODAT]] -> [[uc2-data-standard|UC2 data standard]] -> [[open-research-knowledge-graph|Open Research Knowledge Graph]]
 7. Methods and inference track: [[statistical-inference|Statistical inference]] -> [[hypothesis-test|Hypothesis test]] -> [[test-statistic|test statistic]] -> [[information-criteria|information criteria]]
+8. Application stack track: [[vue-3|Vue 3]] -> [[pinia|Pinia]] -> [[vite|Vite]] -> [[fastapi|FastAPI]] -> [[sqlmodel|SQLModel]] -> [[postgresql|PostgreSQL]] -> [[docker-compose|Docker Compose]]
+9. Linux automation track: [[proxmox|Proxmox]] -> [[saltstack|SaltStack]] -> [[saltstack-reactors-and-orchestration|SaltStack reactors and orchestration]] -> [[checkmk|Checkmk]] -> [[linux-administration-in-datacenters|Linux Administration in Datacenters]]
 
 ## Quality and maintenance
 
