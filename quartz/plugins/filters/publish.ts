@@ -15,7 +15,9 @@ const normalizePublishValue = (value: unknown): string => {
 export const BlockPrivateNotes: QuartzFilterPlugin = () => ({
   name: "BlockPrivateNotes",
   shouldPublish(_ctx, [_tree, vfile]) {
+    // Explicit allowlist: a note is only published when it opts in via
+    // `publish: public` (or `publish: true`). Missing or unknown values stay private.
     const publishValue = normalizePublishValue(vfile.data?.frontmatter?.publish)
-    return publishValue !== "private" && publishValue !== "false"
+    return publishValue === "public" || publishValue === "true"
   },
 })
