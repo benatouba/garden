@@ -123,6 +123,10 @@ plugins:
   - source: github:quartz-community/alias-redirects
     enabled: true
 
+  - source: github:quartz-community/unlisted-pages
+    enabled: true
+    order: 45
+
   - source: github:quartz-community/content-index
     enabled: true
     options:

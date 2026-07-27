@@ -94,3 +94,6 @@
 [submodule ".quartz/plugins/tag-page"]
 	path = .quartz/plugins/tag-page
 	url = https://github.com/quartz-community/tag-page.git
+[submodule ".quartz/plugins/unlisted-pages"]
+	path = .quartz/plugins/unlisted-pages
+	url = https://github.com/quartz-community/unlisted-pages.git
