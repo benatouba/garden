@@ -176,7 +176,9 @@ const cloneRepository = async ({ gitUrl, gitRef, targetDir, token, cwd }) => {
   await fs.rm(targetDir, { recursive: true, force: true })
   await ensureDirectory(path.dirname(targetDir))
 
-  const cloneArgs = ["clone", "--depth", "1", "--branch", gitRef]
+  // partial clone: full commit/tree history (needed for per-file git dates)
+  // while file contents are fetched lazily
+  const cloneArgs = ["clone", "--filter=blob:none", "--branch", gitRef]
   const attempts = []
 
   if (token && isGitHubHttpsUrl(gitUrl)) {
@@ -314,6 +316,85 @@ const resolveEntryNoteSource = async ({ sourceRoot, sourceSubdir, entryNoteSetti
   )
 }
 
+const GIT_DATE_MARKER = "__COMMIT__"
+
+// Map of repo-relative file path -> unix timestamp of its last change.
+// `git log` lists commits newest-first, so the first time a path appears
+// is its most recent modification.
+const collectGitFileDates = async (repoDir) => {
+  const dates = new Map()
+  const { stdout } = await execFileAsync(
+    "git",
+    [
+      "-C",
+      repoDir,
+      "-c",
+      "core.quotePath=false",
+      "log",
+      `--format=${GIT_DATE_MARKER}%ct`,
+      "--name-only",
+    ],
+    { maxBuffer: 64 * 1024 * 1024 },
+  )
+
+  let timestamp = null
+  for (const line of stdout.split("\n")) {
+    if (line.startsWith(GIT_DATE_MARKER)) {
+      timestamp = Number(line.slice(GIT_DATE_MARKER.length))
+      continue
+    }
+
+    if (line.length === 0 || timestamp === null || dates.has(line)) {
+      continue
+    }
+
+    dates.set(line, timestamp)
+  }
+
+  return dates
+}
+
+// Set each synced file's mtime to its last change in the source repo, so the
+// build can derive real creation/modification dates from the filesystem.
+// Files without git history keep their copy time (i.e. "now" = newest).
+const stampContentDates = async ({ contentDir, repoDir, sourceSubdir }) => {
+  let gitDates
+  try {
+    gitDates = await collectGitFileDates(repoDir)
+  } catch {
+    console.warn("Could not read git history for note dates; keeping copy timestamps.")
+    return
+  }
+
+  const stampTree = async (relative = "") => {
+    const entries = await fs.readdir(path.join(contentDir, relative), { withFileTypes: true })
+    for (const entry of entries) {
+      const nextRelative = relative ? path.join(relative, entry.name) : entry.name
+      if (entry.isDirectory()) {
+        await stampTree(nextRelative)
+        continue
+      }
+
+      if (!entry.isFile()) {
+        continue
+      }
+
+      const repoPath = (sourceSubdir === "." ? nextRelative : path.join(sourceSubdir, nextRelative))
+        .split(path.sep)
+        .join("/")
+      const timestamp = gitDates.get(repoPath)
+      if (timestamp === undefined) {
+        continue
+      }
+
+      const date = new Date(timestamp * 1000)
+      await fs.utimes(path.join(contentDir, nextRelative), date, date)
+    }
+  }
+
+  await stampTree()
+}
+
 try {
   await loadDotEnvFile(ENV_FILE)
 
@@ -362,6 +443,8 @@ try {
   if (!(await fileExists(entryNote))) {
     throw new Error("Failed to place entry note at content/index.md")
   }
+
+  await stampContentDates({ contentDir: CONTENT_DIR, repoDir: CLONE_DIR, sourceSubdir })
 
   console.log("Vivere notes synced.")
   console.log(`- source repo: ${gitUrl}`)

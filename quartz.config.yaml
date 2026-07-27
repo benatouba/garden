@@ -75,7 +75,7 @@ plugins:
   - source: github:quartz-community/created-modified-date
     enabled: true
     options:
-      defaultDateType: published
+      defaultDateType: modified
       priority:
         - frontmatter
         - filesystem
