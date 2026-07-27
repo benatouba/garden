@@ -31,6 +31,9 @@
 [submodule ".quartz/plugins/description"]
 	path = .quartz/plugins/description
 	url = https://github.com/quartz-community/description.git
+[submodule ".quartz/plugins/explicit-publish"]
+	path = .quartz/plugins/explicit-publish
+	url = https://github.com/quartz-community/explicit-publish.git
 [submodule ".quartz/plugins/explorer"]
 	path = .quartz/plugins/explorer
 	url = https://github.com/quartz-community/explorer.git

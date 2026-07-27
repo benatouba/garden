@@ -3,7 +3,7 @@ title: "Digital Garden"
 description: "Entry note and map of maps for the public knowledge garden."
 date: 2026-04-07
 tags: [welcome, digital-garden, garden, moc, index, notes]
-publish: public
+publish: true
 aliases:
   - "Digital Garden"
   - "Digital Garden Entry"

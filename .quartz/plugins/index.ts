@@ -50,6 +50,9 @@ export const plugins: Record<string, Record<string, (...args: unknown[]) => void
   "description": {
     Description: (...args: unknown[]) => { componentRegistry.setOptionOverrides("description", args[0] as Record<string, unknown>); },
   },
+  "explicit-publish": {
+    ExplicitPublish: (...args: unknown[]) => { componentRegistry.setOptionOverrides("explicit-publish", args[0] as Record<string, unknown>); },
+  },
   "favicon": {
     Favicon: (...args: unknown[]) => { componentRegistry.setOptionOverrides("favicon", args[0] as Record<string, unknown>); },
   },
@@ -83,6 +86,7 @@ export const ContentPage = plugins["content-page"].ContentPage
 export const CrawlLinks = plugins["crawl-links"].CrawlLinks
 export const CreatedModifiedDate = plugins["created-modified-date"].CreatedModifiedDate
 export const Description = plugins["description"].Description
+export const ExplicitPublish = plugins["explicit-publish"].ExplicitPublish
 export const Favicon = plugins["favicon"].Favicon
 export const GitHubFlavoredMarkdown = plugins["github-flavored-markdown"].GitHubFlavoredMarkdown
 export const Latex = plugins["latex"].Latex

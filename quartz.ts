@@ -1,7 +1,6 @@
 import { componentRegistry } from "./quartz/components"
 import { AliasRedirects } from "./quartz/plugins/emitters/aliasRedirects"
 import { loadQuartzConfig, loadQuartzLayout } from "./quartz/plugins/loader/config-loader"
-import { BlockPrivateNotes } from "./quartz/plugins/filters/publish"
 
 componentRegistry.setOptionOverrides("explorer", {
   filterFn: () => true,
@@ -30,9 +29,10 @@ componentRegistry.setOptionOverrides("recent-notes", {
 })
 
 const config = await loadQuartzConfig()
-config.plugins.filters.push(BlockPrivateNotes())
 
-const aliasRedirectIdx = config.plugins.emitters.findIndex((emitter) => emitter.name === "AliasRedirects")
+const aliasRedirectIdx = config.plugins.emitters.findIndex(
+  (emitter) => emitter.name === "AliasRedirects",
+)
 if (aliasRedirectIdx >= 0) {
   config.plugins.emitters.splice(aliasRedirectIdx, 1, AliasRedirects())
 }
