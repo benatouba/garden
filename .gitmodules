@@ -10,6 +10,9 @@
 [submodule ".quartz/plugins/breadcrumbs"]
 	path = .quartz/plugins/breadcrumbs
 	url = https://github.com/quartz-community/breadcrumbs.git
+[submodule ".quartz/plugins/citations"]
+	path = .quartz/plugins/citations
+	url = https://github.com/quartz-community/citations.git
 [submodule ".quartz/plugins/cname"]
 	path = .quartz/plugins/cname
 	url = https://github.com/quartz-community/cname.git

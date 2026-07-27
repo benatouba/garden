@@ -117,6 +117,13 @@ plugins:
       renderEngine: katex
     order: 80
 
+  - source: github:quartz-community/citations
+    enabled: true
+    options:
+      bibliographyFile: ./bibliography.bib
+      csl: apa
+    order: 85
+
   - source: github:quartz-community/remove-draft
     enabled: true
 

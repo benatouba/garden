@@ -25,6 +25,12 @@
       "commit": "4d283d8704fc7c6afb23e88524eda97316df889d",
       "installedAt": "2026-07-27T17:10:56.287Z"
     },
+    "citations": {
+      "source": "github:quartz-community/citations",
+      "resolved": "https://github.com/quartz-community/citations.git",
+      "commit": "5db598448105ee791665ff3b5e4c35b285a85296",
+      "installedAt": "2026-07-27T20:34:37.705Z"
+    },
     "cname": {
       "source": "github:quartz-community/cname",
       "resolved": "https://github.com/quartz-community/cname.git",

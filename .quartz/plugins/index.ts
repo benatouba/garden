@@ -1,5 +1,6 @@
 import { componentRegistry } from "../../quartz/components/registry"
 
+export type { CitationsOptions } from "./citations"
 export type { ContentDetails, ContentIndexMap } from "./content-index"
 export type { ContentPageOptions } from "./content-page"
 export type { CrawlLinksOptions } from "./crawl-links"
@@ -33,6 +34,9 @@ export { TagPage, TagPageOptions, TagContent } from "./tag-page"
 export const plugins: Record<string, Record<string, (...args: unknown[]) => void>> = {
   "alias-redirects": {
     AliasRedirects: (...args: unknown[]) => { componentRegistry.setOptionOverrides("alias-redirects", args[0] as Record<string, unknown>); },
+  },
+  "citations": {
+    Citations: (...args: unknown[]) => { componentRegistry.setOptionOverrides("citations", args[0] as Record<string, unknown>); },
   },
   "cname": {
     CNAME: (...args: unknown[]) => { componentRegistry.setOptionOverrides("cname", args[0] as Record<string, unknown>); },
@@ -85,6 +89,7 @@ export const plugins: Record<string, Record<string, (...args: unknown[]) => void
 }
 
 export const AliasRedirects = plugins["alias-redirects"].AliasRedirects
+export const Citations = plugins["citations"].Citations
 export const CNAME = plugins["cname"].CNAME
 export const ContentIndex = plugins["content-index"].ContentIndex
 export const ContentPage = plugins["content-page"].ContentPage
