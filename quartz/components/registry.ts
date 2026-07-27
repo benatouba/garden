@@ -8,6 +8,8 @@ export interface ComponentManifest {
   quartzVersion?: string
   author?: string
   homepage?: string
+  defaultPosition?: string
+  defaultPriority?: number
 }
 
 export interface RegisteredComponent {
@@ -90,7 +92,12 @@ class ComponentRegistry {
       try {
         let instance: QuartzComponent
         if (typeof r.component === "function") {
-          instance = this.instantiate(r.component as QuartzComponentConstructor, undefined)
+          // Check if this constructor was already instantiated (with any options).
+          // Re-instantiating with `undefined` when options were provided would create
+          // a duplicate instance with separate afterDOMLoaded scripts.
+          const existing = this.findCachedInstance(r.component as QuartzComponentConstructor)
+          instance =
+            existing ?? this.instantiate(r.component as QuartzComponentConstructor, undefined)
         } else {
           instance = r.component as QuartzComponent
         }
@@ -102,6 +109,17 @@ class ComponentRegistry {
       }
     }
     return results
+  }
+
+  private findCachedInstance(
+    constructor: QuartzComponentConstructor<any>,
+  ): QuartzComponent | undefined {
+    const ctorId = (constructor as unknown as { __cacheId?: string }).__cacheId
+    if (!ctorId) return undefined
+    for (const [key, instance] of this.instanceCache) {
+      if (key.startsWith(`${ctorId}:`)) return instance
+    }
+    return undefined
   }
 }
 
