@@ -61,6 +61,12 @@
       "commit": "a47474990f34a3b1396cf8972c8b6bfe66e1452d",
       "installedAt": "2026-07-27T17:10:56.313Z"
     },
+    "darkmode": {
+      "source": "github:quartz-community/darkmode",
+      "resolved": "https://github.com/quartz-community/darkmode.git",
+      "commit": "eafbe135895ac2214d66b4ef5d1cd351e5570201",
+      "installedAt": "2026-07-27T20:34:37.688Z"
+    },
     "description": {
       "source": "github:quartz-community/description",
       "resolved": "https://github.com/quartz-community/description.git",
@@ -138,6 +144,12 @@
       "resolved": "https://github.com/quartz-community/page-title.git",
       "commit": "a2e035fd9a99fc07197c6627bb21d08c57038fc6",
       "installedAt": "2026-07-27T17:10:56.942Z"
+    },
+    "reader-mode": {
+      "source": "github:quartz-community/reader-mode",
+      "resolved": "https://github.com/quartz-community/reader-mode.git",
+      "commit": "5612a68b969da1180853b5524873dabf0f897c34",
+      "installedAt": "2026-07-27T20:34:37.690Z"
     },
     "recent-notes": {
       "source": "github:quartz-community/recent-notes",

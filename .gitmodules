@@ -28,6 +28,9 @@
 [submodule ".quartz/plugins/created-modified-date"]
 	path = .quartz/plugins/created-modified-date
 	url = https://github.com/quartz-community/created-modified-date.git
+[submodule ".quartz/plugins/darkmode"]
+	path = .quartz/plugins/darkmode
+	url = https://github.com/quartz-community/darkmode.git
 [submodule ".quartz/plugins/description"]
 	path = .quartz/plugins/description
 	url = https://github.com/quartz-community/description.git
@@ -64,6 +67,9 @@
 [submodule ".quartz/plugins/page-title"]
 	path = .quartz/plugins/page-title
 	url = https://github.com/quartz-community/page-title.git
+[submodule ".quartz/plugins/reader-mode"]
+	path = .quartz/plugins/reader-mode
+	url = https://github.com/quartz-community/reader-mode.git
 [submodule ".quartz/plugins/recent-notes"]
 	path = .quartz/plugins/recent-notes
 	url = https://github.com/quartz-community/recent-notes.git
