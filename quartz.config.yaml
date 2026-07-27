@@ -234,7 +234,7 @@ plugins:
       position: right
       priority: 30
 
-  - source: github:quartz-community/footer
+  - source: ./plugins/garden-footer
     enabled: true
     options:
       links:

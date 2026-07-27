@@ -1,0 +1,43 @@
+{
+  "name": "@garden/footer",
+  "version": "1.0.0",
+  "description": "Garden footer component whose links open in a new tab",
+  "type": "module",
+  "scripts": {
+    "build": "node -e \"\""
+  },
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./components": "./components/index.js"
+  },
+  "quartz": {
+    "name": "garden-footer",
+    "version": "1.0.0",
+    "description": "Footer with links opening in a new tab",
+    "author": "ben",
+    "license": "MIT",
+    "category": "component",
+    "quartzVersion": ">=5.0.0",
+    "components": {
+      "Footer": {
+        "displayName": "Garden Footer",
+        "description": "Footer whose links open in a new tab",
+        "defaultPosition": "footer",
+        "defaultPriority": 50
+      }
+    },
+    "defaultOptions": {
+      "links": {}
+    },
+    "optionSchema": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "type": "object",
+          "description": "Mapping of link text to URL"
+        }
+      }
+    }
+  }
+}
