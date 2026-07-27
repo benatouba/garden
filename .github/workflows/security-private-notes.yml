@@ -20,6 +20,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # The committed plugin submodules check out as empty directories, which the
+      # Quartz plugin installer treats as "already installed". Remove them so the
+      # plugins are actually installed and built (same as the Netlify build).
+      - name: Install Quartz plugins
+        run: rm -rf .quartz/plugins && npx quartz plugin install --from-config --clean
+
       - name: Build and run security checks
         run: npm run build
         env:
