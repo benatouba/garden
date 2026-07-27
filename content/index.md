@@ -29,6 +29,7 @@ Here I write about climate science, programming, data work, and the Linux-heavy 
 - [[moc-projects-and-research-threads|Projects and research threads]]
 - [[moc-computing-devops-and-software|Computing, devops, and software]]
 - [[moc-web-development-and-application-architecture|Web development and application architecture]]
+- [[moc-reading-and-thinkers|Reading and thinkers]]
 
 ## Core pathways
 
