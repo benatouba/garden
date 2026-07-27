@@ -17,6 +17,15 @@ const pathExists = async (targetPath) => {
   }
 }
 
+const fileExists = async (targetPath) => {
+  try {
+    const stats = await fs.stat(targetPath)
+    return stats.isFile()
+  } catch {
+    return false
+  }
+}
+
 const getFileExtension = (value) => value.match(/\.[A-Za-z0-9]+$/)?.[0]
 
 const stripSlashes = (value, onlyStripPrefix = false) => {
@@ -143,31 +152,47 @@ const extractCanonicalSlug = (html) => {
   return normalizeUrlLikeSlug(canonicalMatch[1])
 }
 
+const walkHtmlFiles = async (dirPath, relative = "") => {
+  const currentDir = path.join(dirPath, relative)
+  const entries = await fs.readdir(currentDir, { withFileTypes: true })
+  let files = []
+
+  for (const entry of entries) {
+    const nextRelative = relative ? path.join(relative, entry.name) : entry.name
+    if (entry.isDirectory()) {
+      files = files.concat(await walkHtmlFiles(dirPath, nextRelative))
+      continue
+    }
+
+    if (entry.isFile() && entry.name.endsWith(".html")) {
+      files.push(path.join(dirPath, nextRelative))
+    }
+  }
+
+  return files
+}
+
 const collectAliasRedirects = async () => {
   if (!(await pathExists(PUBLIC_DIR))) {
     return new Map()
   }
 
-  const rootEntries = await fs.readdir(PUBLIC_DIR, { withFileTypes: true })
+  const htmlFiles = await walkHtmlFiles(PUBLIC_DIR)
   const aliasRedirects = new Map()
 
-  for (const entry of rootEntries) {
-    if (!entry.isFile() || !entry.name.endsWith(".html")) {
+  for (const filePath of htmlFiles) {
+    const html = await fs.readFile(filePath, "utf8")
+    if (!html.includes('http-equiv="refresh"') || !html.includes('name="robots"')) {
       continue
     }
 
-    const filePath = path.join(PUBLIC_DIR, entry.name)
-    const html = await fs.readFile(filePath, "utf8")
     const canonicalSlug = extractCanonicalSlug(html)
     if (!canonicalSlug) {
       continue
     }
 
-    if (!html.includes('http-equiv="refresh"') || !html.includes('name="robots"')) {
-      continue
-    }
-
-    const aliasSlug = normalizeUrlLikeSlug(entry.name)
+    const relativePath = path.relative(PUBLIC_DIR, filePath).split(path.sep).join("/")
+    const aliasSlug = normalizeUrlLikeSlug(relativePath)
     if (!aliasSlug) {
       continue
     }
@@ -176,6 +201,59 @@ const collectAliasRedirects = async () => {
   }
 
   return aliasRedirects
+}
+
+const escapeHtmlEntities = (value) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+
+const extractHtmlTitle = (html) => html.match(/<title>([^<]*)<\/title>/i)?.[1] ?? null
+
+// A private note must never have an emitted page. Notes are emitted at
+// public/<slug>.html. Folders additionally emit listing pages at
+// <folder>/index.html, which collides with the output path of a filtered
+// <folder>/index.md note, so those are only flagged when the emitted page
+// carries the private note's own title.
+const findEmittedPrivatePages = async (privateNotes) => {
+  const violations = []
+
+  for (const { slug, relativePath, title } of privateNotes) {
+    const outputPath = path.join(PUBLIC_DIR, `${slug}.html`)
+    if (!(await fileExists(outputPath))) {
+      continue
+    }
+
+    const html = await fs.readFile(outputPath, "utf8")
+
+    // Alias redirect pages of other (public) notes can share this slug. They
+    // contain no note content and are covered by the alias-redirect check.
+    if (html.includes('http-equiv="refresh"') && html.includes('name="robots"')) {
+      continue
+    }
+
+    if (slug === "index" || slug.endsWith("/index")) {
+      const pageTitle = extractHtmlTitle(html)
+      const noteTitle =
+        typeof title === "string" && title.trim().length > 0
+          ? escapeHtmlEntities(title.trim())
+          : null
+      if (pageTitle && noteTitle && !pageTitle.includes(noteTitle)) {
+        continue
+      }
+    }
+
+    violations.push({
+      note: relativePath,
+      slug,
+      outputPath: path.join("public", `${slug}.html`),
+    })
+  }
+
+  return violations
 }
 
 try {
@@ -187,8 +265,18 @@ try {
     throw new Error("Missing public directory. Run the Quartz build before this security check.")
   }
 
+  if (!(await pathExists(path.join(PUBLIC_DIR, "index.html")))) {
+    throw new Error(
+      "Missing public/index.html: the build emitted no entry page. " +
+        "This usually means every note was filtered out (e.g. plugins failed to " +
+        "instantiate, so frontmatter was unavailable to the publish filter). " +
+        "Check the build log for plugin failures.",
+    )
+  }
+
   const aliasRedirects = await collectAliasRedirects()
   const markdownFiles = await walkMarkdownFiles(CONTENT_DIR)
+  const privateNotes = []
   const privateSlugs = new Map()
 
   for (const filePath of markdownFiles) {
@@ -200,17 +288,19 @@ try {
 
     const relativePath = path.relative(CONTENT_DIR, filePath).split(path.sep).join("/")
     const primarySlug = slugifyFilePath(relativePath)
+    privateNotes.push({ slug: primarySlug, relativePath, title: frontmatter.title })
     privateSlugs.set(primarySlug, relativePath)
   }
 
-  const violations = []
+  const aliasViolations = []
   for (const [aliasSlug, canonicalSlug] of aliasRedirects.entries()) {
-    const privateSource = privateSlugs.get(canonicalSlug)
+    const privateSource =
+      privateSlugs.get(canonicalSlug) ?? privateSlugs.get(`${canonicalSlug}/index`)
     if (!privateSource) {
       continue
     }
 
-    violations.push({
+    aliasViolations.push({
       note: privateSource,
       aliasSlug,
       canonicalSlug,
@@ -218,21 +308,38 @@ try {
     })
   }
 
-  if (violations.length > 0) {
+  const emittedViolations = await findEmittedPrivatePages(privateNotes)
+
+  if (emittedViolations.length > 0) {
+    console.error("Security check failed: pages were emitted for private notes.")
+    for (const violation of emittedViolations.slice(0, 50)) {
+      console.error(`- ${violation.note} -> ${violation.outputPath} (slug: ${violation.slug})`)
+    }
+
+    if (emittedViolations.length > 50) {
+      console.error(`...and ${emittedViolations.length - 50} more.`)
+    }
+  }
+
+  if (aliasViolations.length > 0) {
     console.error("Security check failed: alias redirects for private notes were emitted.")
-    for (const violation of violations.slice(0, 50)) {
+    for (const violation of aliasViolations.slice(0, 50)) {
       console.error(
         `- ${violation.note} -> ${violation.outputPath} (canonical: ${violation.canonicalSlug})`,
       )
     }
 
-    if (violations.length > 50) {
-      console.error(`...and ${violations.length - 50} more.`)
+    if (aliasViolations.length > 50) {
+      console.error(`...and ${aliasViolations.length - 50} more.`)
     }
+  }
 
+  if (emittedViolations.length > 0 || aliasViolations.length > 0) {
     process.exitCode = 1
   } else {
-    console.log("Security check passed: no alias redirects point to private notes.")
+    console.log(
+      `Security check passed: no pages or alias redirects were published for ${privateNotes.length} private notes.`,
+    )
   }
 } catch (error) {
   console.error("Security check failed.")
