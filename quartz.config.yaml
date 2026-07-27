@@ -140,7 +140,7 @@ plugins:
     enabled: true
 
   - source: github:quartz-community/og-image
-    enabled: false
+    enabled: true
 
   - source: github:quartz-community/content-page
     enabled: true
