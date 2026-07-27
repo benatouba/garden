@@ -40,9 +40,6 @@
 [submodule ".quartz/plugins/folder-page"]
 	path = .quartz/plugins/folder-page
 	url = https://github.com/quartz-community/folder-page.git
-[submodule ".quartz/plugins/footer"]
-	path = .quartz/plugins/footer
-	url = https://github.com/quartz-community/footer.git
 [submodule ".quartz/plugins/github-flavored-markdown"]
 	path = .quartz/plugins/github-flavored-markdown
 	url = https://github.com/quartz-community/github-flavored-markdown.git
